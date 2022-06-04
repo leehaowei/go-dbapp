@@ -1,0 +1,7 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/haowei/goworkspace/src/ws3/go-dbapp'
+go get -u gorm.io/gorm
+go get -u gorm.io/driver/mysql
+go get -u github.com/gorilla/mux
+make: Leaving directory `/Users/haowei/goworkspace/src/ws3/go-dbapp'
+ 
