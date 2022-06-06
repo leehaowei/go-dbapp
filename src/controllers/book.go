@@ -2,6 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/leehaowei/go-dbapp/src/models"
+	"github.com/leehaowei/go-dbapp/src/utils"
 	"net/http"
 )
 
@@ -29,12 +32,24 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+//func CreateBook(w http.ResponseWriter, r *http.Request) {
+//	setSameHeader(w)
+//	w.WriteHeader(http.StatusOK)
+//	json.NewEncoder(w).Encode(ResponseResult{
+//		Result: "CreateBook",
+//	})
+//}
+
 func CreateBook(w http.ResponseWriter, r *http.Request) {
+	book := &models.Book{}
+	utils.ParseRequestBody(r, book)
+	fmt.Println(book)
+	newBook := book.CreateBook()
+	fmt.Println(newBook)
+	res, _ := json.Marshal(newBook)
 	setSameHeader(w)
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(ResponseResult{
-		Result: "CreateBook",
-	})
+	w.Write(res)
 }
 
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
