@@ -1,0 +1,28 @@
+###
+GET {{server}}/books
+
+###
+GET {{server}}/books/1
+
+###
+POST {{server}}/books
+content-type: application/json
+
+{
+  "title": "Learning Go is fun",
+  "price": 28,
+  "author": "Gogoro"
+}
+
+###
+DELETE {{server}}/books/1
+
+###
+PUT {{server}}/books/1
+content-type: application/json
+
+{
+  "title": "Go day",
+  "price": 282,
+  "author": "WeGo"
+}
