@@ -3,9 +3,11 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/leehaowei/go-dbapp/src/models"
 	"github.com/leehaowei/go-dbapp/src/utils"
 	"net/http"
+	"strconv"
 )
 
 type ResponseResult struct {
@@ -17,28 +19,33 @@ func setSameHeader(w http.ResponseWriter) {
 }
 
 func ListBooks(w http.ResponseWriter, r *http.Request) {
+	books := models.GetAllBooks()
+	res, err := json.Marshal(books)
+	if err != nil {
+		fmt.Println(err)
+	}
 	setSameHeader(w)
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(ResponseResult{
-		Result: "ListBooks",
-	})
+	w.Write(res)
 }
 
 func GetBook(w http.ResponseWriter, r *http.Request) {
-	setSameHeader(w)
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(ResponseResult{
-		Result: "GetBook",
-	})
+	vars := mux.Vars(r)
+	bookId := vars["id"]
+	id, err := strconv.ParseInt(bookId, 0, 0)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		book, _ := models.GetBook(id)
+		res, err := json.Marshal(book)
+		if err != nil {
+			fmt.Println(err)
+		}
+		setSameHeader(w)
+		w.WriteHeader(http.StatusOK)
+		w.Write(res)
+	}
 }
-
-//func CreateBook(w http.ResponseWriter, r *http.Request) {
-//	setSameHeader(w)
-//	w.WriteHeader(http.StatusOK)
-//	json.NewEncoder(w).Encode(ResponseResult{
-//		Result: "CreateBook",
-//	})
-//}
 
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	book := &models.Book{}
@@ -53,17 +60,45 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
-	setSameHeader(w)
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(ResponseResult{
-		Result: "DeleteBook",
-	})
+	vars := mux.Vars(r)
+	bookId := vars["id"]
+	id, err := strconv.ParseInt(bookId, 0, 0)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		book := models.DeleteBook(id)
+		res, _ := json.Marshal(book)
+		setSameHeader(w)
+		w.WriteHeader(http.StatusOK)
+		w.Write(res)
+	}
 }
 
 func UpdateBook(w http.ResponseWriter, r *http.Request) {
-	setSameHeader(w)
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(ResponseResult{
-		Result: "UpdateBook",
-	})
+	var updateBook = &models.Book{}
+	utils.ParseRequestBody(r, updateBook)
+	vars := mux.Vars(r)
+	bookId := vars["id"]
+	id, err := strconv.ParseInt(bookId, 0, 0)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		book, db := models.GetBook(id)
+		if updateBook.Title != "" {
+			book.Title = updateBook.Title
+		}
+		if updateBook.Price > -1 {
+			book.Price = updateBook.Price
+		}
+		if updateBook.Author != "" {
+			book.Author = updateBook.Author
+		}
+		fmt.Println(book)
+
+		db.Save(&book)
+		res, _ := json.Marshal(book)
+		setSameHeader(w)
+		w.WriteHeader(http.StatusOK)
+		w.Write(res)
+	}
 }

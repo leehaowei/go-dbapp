@@ -18,11 +18,11 @@ content-type: application/json
 DELETE {{server}}/books/1
 
 ###
-PUT {{server}}/books/1
+PUT {{server}}/books/3
 content-type: application/json
 
 {
-  "title": "Go day",
-  "price": 282,
-  "author": "WeGo"
+  "title": "Go versus Rust",
+  "price": 289,
+  "author": "Rusty Gopher"
 }
